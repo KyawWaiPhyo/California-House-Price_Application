@@ -98,5 +98,5 @@ if "prediction" in st.session_state and "user_input" in st.session_state:
         row = st.session_state.user_input + [st.session_state.prediction, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
         sheet.append_row(row)
         st.success("✅ Prediction logged to Google Sheet!")
-else:
-    st.warning("⚠️ Please make a prediction first before logging to Google Sheets.")
+    else:
+        st.warning("⚠️ Please make a prediction first before logging to Google Sheets.")
