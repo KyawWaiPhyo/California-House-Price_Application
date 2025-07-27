@@ -18,6 +18,12 @@ try:
     st.success("✅ Google Sheet accessed successfully.")
 except Exception as e:
     st.error(f"❌ Error accessing Google Sheet: {e}")
+
+# ✅ Insert headers only if sheet is empty
+if len(sheet.get_all_values()) == 0:
+    columns = selected_features + ['predicted_price', 'timestamp']
+    sheet.insert_row(columns, index=1)
+
 # Load both models
 rf_model = joblib.load("tuned_rf_compressed.pkl")
 gb_model = joblib.load("tuned_gb.pkl")
