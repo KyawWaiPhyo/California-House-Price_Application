@@ -96,12 +96,11 @@ if os.path.exists(log_file):
 
 # --- Google Sheet Logging ---
 st.markdown("---")
-st.title("📊 Please, Log Predictions to Google Sheet")
-
+st.subheader("📤 Log to Google Sheet")
 if st.session_state.prediction is not None and st.session_state.user_input is not None:
     if st.button("Log to Sheet"):
         row = st.session_state.user_input + [st.session_state.prediction, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
         sheet.append_row(row)
         st.success("✅ Prediction logged to Google Sheet!")
-    else:
-        st.warning("⚠️ Please make a prediction first before logging to Google Sheets.")
+else:
+    st.warning("ℹ️ Please make a prediction first before logging to Google Sheets.")
