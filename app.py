@@ -69,6 +69,10 @@ if st.button("Predict"):
 
     st.success(f"📊 Predicted Price: **${prediction:,.2f}**")
 
+    # ✅ Save to session so it survives rerun
+    st.session_state.prediction = prediction
+    st.session_state.user_input = user_input
+
         # Save input + prediction to log file
     data_row = user_input + [prediction, datetime.now()]
     columns = features + ['predicted_price', 'timestamp']
@@ -96,7 +100,7 @@ if os.path.exists(log_file):
 
 # --- Google Sheet Logging ---
 st.markdown("---")
-st.subheader("📤 Log to Google Sheet")
+st.subheader("📤 Log Prediction to Google Sheet")
 if st.session_state.prediction is not None and st.session_state.user_input is not None:
     if st.button("Log to Sheet"):
         row = st.session_state.user_input + [st.session_state.prediction, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
