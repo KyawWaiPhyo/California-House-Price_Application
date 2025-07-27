@@ -44,6 +44,12 @@ for feature in features:
     value = st.number_input(f"{feature}", step=0.1)
   user_input.append(value)
 
+# --- Initialize session state ---
+if "prediction" not in st.session_state:
+    st.session_state.prediction = None
+if "user_input" not in st.session_state:
+    st.session_state.user_input = None
+
 # Predict
 if st.button("Predict"):
   if validation_failed:
@@ -89,9 +95,10 @@ if os.path.exists(log_file):
         )
 
 # --- Google Sheet Logging ---
+st.markdown("---")
 st.title("📊 Please, Log Predictions to Google Sheet")
 
-if "prediction" in st.session_state and "user_input" in st.session_state:
+if st.session_state.prediction is not None and st.session_state.user_input is not None:
     if st.button("Log to Sheet"):
         row = st.session_state.user_input + [st.session_state.prediction, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
         sheet.append_row(row)
