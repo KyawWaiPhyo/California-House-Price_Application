@@ -5,6 +5,14 @@ import pickle
 import os
 from datetime import datetime
 import pandas as pd
+import streamlit as st
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+creds = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gcp_service_account"],scope)
+client = gspread.authorize(creds)
+sheet = client.open("house_predictions").sheet1
 
 # Load both models
 rf_model = joblib.load("tuned_rf_compressed.pkl")
@@ -78,13 +86,7 @@ if os.path.exists(log_file):
 else:
     st.warning("📂 No prediction log found yet. Make a prediction first.")
 
-import streamlit as st
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("service_account.json", scope)
-client = gspread.authorize(creds)
-sheet = client.open("house_predictions").sheet1
+
 st.title("📊 Log Prediction to Google Sheet")
 # --- Append to sheet ---
 if st.button("Log to Sheet"):
