@@ -91,9 +91,12 @@ else:
     st.warning("📂 No prediction log found yet. Make a prediction first.")
 
 
-st.title("📊 Log Prediction to Google Sheet")
+st.title("📊 Please, Log Predictions to Google Sheet")
 # --- Append to sheet ---
-if st.button("Log to Sheet"):
-    row = user_input + [prediction, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
-    sheet.append_row(row)
-    st.success("✅ Prediction logged to Google Sheet!")
+if "prediction" in st.session_state and "user_input" in st.session_state:
+    if st.button("Log to Sheet"):
+        row = st.session_state.user_input + [st.session_state.prediction, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
+        sheet.append_row(row)
+        st.success("✅ Prediction logged to Google Sheet!")
+else:
+    st.warning("⚠️ Please make a prediction first before logging to Google Sheets.")
