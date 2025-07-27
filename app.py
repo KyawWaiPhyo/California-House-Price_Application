@@ -77,24 +77,23 @@ if st.button("Predict"):
         log_df.to_csv(log_file, mode='w', header=True, index=False)
 
     st.info(f"Model Used: {model_used} and your inputs and prediction were logged for future model improvements.")
-# Show download button if log exists
-log_file = "prediction_log.csv"
-if os.path.exists(log_file):
-    with open(log_file, "rb") as f:
-        st.download_button(
-            label="⬇️ Download Prediction Log",
-            data=f,
-            file_name="prediction_log.csv",
-            mime="text/csv"
-        )
-else:
-    st.warning("📂 No prediction log found yet. Make a prediction first.")
+        # Save locally to CSV
+    data_row = user_input + [prediction, datetime.now()]
+    columns = features + ['predicted_price', 'timestamp']
+    log_df = pd.DataFrame([data_row], columns=columns)
+    log_file = "prediction_log.csv"
+    if os.path.exists(log_file):
+            log_df.to_csv(log_file, mode='a', header=False, index=False)
+    else:
+            log_df.to_csv(log_file, mode='w', header=True, index=False)
+
+    st.info(f"Model Used: {model_used} and your inputs and prediction were logged for future model improvements.")
 
 
-st.title("📊 Please, Log Predictions to Google Sheet")
-# --- Append to sheet ---
-if "prediction" in st.session_state and "user_input" in st.session_state:
-    if st.button("Log to Sheet"):
+    st.title("📊 Please, Log Predictions to Google Sheet")
+    # --- Append to sheet ---
+    if "prediction" in st.session_state and "user_input" in st.session_state:
+      if st.button("Log to Sheet"):
         row = st.session_state.user_input + [st.session_state.prediction, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
         sheet.append_row(row)
         st.success("✅ Prediction logged to Google Sheet!")
