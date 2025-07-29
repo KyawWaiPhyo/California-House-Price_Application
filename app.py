@@ -107,10 +107,34 @@ if os.path.exists(log_file):
 # --- Google Sheet Logging ---
 st.markdown("---")
 st.subheader("📤 Log Prediction to Google Sheet")
-if st.session_state.prediction is not None and st.session_state.user_input is not None:
+
+if st.session_state.get("prediction") is not None and st.session_state.get("user_input") is not None:
     if st.button("Log to Sheet"):
-        row = st.session_state.user_input + [st.session_state.prediction, datetime.now().strftime("%Y-%m-%d %H:%M:%S")]
-        sheet.append_row(row)
-        st.success("✅ Prediction logged to Google Sheet!")
+        try:
+            log_df = pd.read_csv("prediction_log.csv")
+
+            # Get existing rows in Google Sheet (excluding header)
+            existing_rows = sheet.get_all_values()[1:]  # skip header
+            existing_set = set(tuple(row) for row in existing_rows)
+
+            # Add headers if sheet is empty
+            if len(existing_rows) == 0:
+                sheet.insert_row(log_df.columns.tolist(), index=1)
+
+            new_rows_added = 0
+            for _, row in log_df.iterrows():
+                formatted_row = [float(cell) if isinstance(cell, (int, float)) or str(cell).replace('.', '', 1).isdigit() else str(cell)for cell in row ]
+                row_tuple = tuple(str(cell) for cell in formatted_row)  # Convert to tuple of strings for comparison
+
+                if row_tuple not in existing_set:
+                    sheet.append_row(formatted_row)
+                    existing_set.add(row_tuple)
+                    new_rows_added += 1
+
+            if new_rows_added:
+                st.success(f"✅ {new_rows_added} new predictions logged to Google Sheet!")
+
+        except Exception as e:
+            st.error(f"❌ Failed to log to Google Sheet: {e}")
 else:
     st.warning("ℹ️ Please make a prediction first before logging to Google Sheets.")
