@@ -74,6 +74,7 @@ if st.button("Predict"):
         model_used = "Tuned Gradient Boosting"
 
     st.success(f"📊 Predicted Price: **${prediction:,.2f}**")
+    st.markdown("_Disclaimer: The price is only estimation, should be used as a guideline rather than absolute truth_")
 
     # ✅ Save to session so it survives rerun
     st.session_state.prediction = prediction
