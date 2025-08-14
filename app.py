@@ -40,15 +40,39 @@ st.markdown("Enter housing features below:")
 user_input = []
 validation_failed = False
 for feature in features:
-  if feature in feature_ranges:
+    if feature in feature_ranges:
         min_val, max_val = feature_ranges[feature]
-        value = st.number_input(f"{feature} ({min_val} to {max_val})", min_value=min_val, max_value=max_val)
-        if not (min_val <= value <= max_val):
-            st.warning(f"⚠️ {feature} must be between {min_val} and {max_val}.")
+        value = st.text_input(f"{feature} ({min_val} to {max_val})")  # Use text_input instead of number_input
+
+        # Check if value is empty
+        if value.strip() == "":
+            st.warning(f"⚠️ Please enter a value for {feature}.")
             validation_failed = True
-  else:
-    value = st.number_input(f"{feature}", step=0.1)
-  user_input.append(value)
+            user_input.append(None)
+        else:
+            try:
+                value = float(value)
+                if not (min_val <= value <= max_val):
+                    st.warning(f"⚠️ {feature} must be between {min_val} and {max_val}.")
+                    validation_failed = True
+                user_input.append(value)
+            except ValueError:
+                st.warning(f"⚠️ {feature} must be a number.")
+                validation_failed = True
+                user_input.append(None)
+    else:
+        value = st.text_input(f"{feature}")
+        if value.strip() == "":
+            st.warning(f"⚠️ Please enter a value for {feature}.")
+            validation_failed = True
+            user_input.append(None)
+        else:
+            try:
+                user_input.append(float(value))
+            except ValueError:
+                st.warning(f"⚠️ {feature} must be a number.")
+                validation_failed = True
+                user_input.append(None)
 
 # --- Initialize session state ---
 if "prediction" not in st.session_state:
